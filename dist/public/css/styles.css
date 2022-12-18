@@ -230,12 +230,11 @@ input[type='submit']:hover {
 
 .menuBar {
   grid-area: menuBar;
-  display: grid;
-  grid-template-columns: auto 100fr auto auto;
+  display: flex;
   align-items: center;
   align-content: start;
   justify-items: center;
-  justify-content: stretch;
+  justify-content: space-between;
   justify-self: stretch;
   padding: 0.25em 0em;
 }

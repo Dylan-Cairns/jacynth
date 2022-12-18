@@ -7,12 +7,9 @@ include ../components/authentication-buttons.pug
       br
       span.subheader A Decktet Game
   #singlePlayerBttn.menu-button.light_shadow
-    a(href='/singleplayer')#newGameBttn New Singleplayer Game
+    a(href='/singleplayer')#newGameBttn New Game
   #singlePlayerResumeBttn.menu-button.light_shadow
     a(href='/singleplayer') Resume Game
-  #multiPlayerBttn.menu-button.light_shadow
-    a(href='/multiplayer') New Multiplayer Game
-  +authentication-buttons(isAuthenticated)
   #highScoresButton.menu-button.light_shadow
     a(href='/highscores') High Scores
   #rulesButton.menu-button.light_shadow
