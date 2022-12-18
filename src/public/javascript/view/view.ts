@@ -2,10 +2,6 @@ import { BoardSpace, GameBoard } from '../model/gameboard.js';
 import { Layout } from '../model/model.js';
 import { Card } from '../model/decktet.js';
 import { AIDifficulty, PlayerID } from '../model/player.js';
-import { Socket } from 'socket.io-client';
-
-// gametype variable passed in by express route
-declare const gameType: 'singleplayer' | 'multiplayer';
 
 export class View {
   currPlyrID: PlayerID;
@@ -138,7 +134,7 @@ export class View {
     // - a new single player game (not restoring from backup)
     // - a multiplayer game
 
-    if (!localStorage.getItem('layout') || gameType === 'multiplayer') {
+    if (!localStorage.getItem('layout')) {
       const token = this.createPlayerToken();
       this.influenceTokenContainer.appendChild(token);
     }
@@ -221,8 +217,8 @@ export class View {
           // play can end turn after placing a card
           this.endTurnButton.disabled = false;
           // set turn status in localStorage
-          if (gameType === 'singleplayer')
-            localStorage.setItem('turnStatus', 'playedCard');
+
+          localStorage.setItem('turnStatus', 'playedCard');
           // or place a token
         } else if (this.draggedElement.classList.contains('influenceToken')) {
           this.draggedElement.parentNode.removeChild(this.draggedElement);
@@ -234,8 +230,8 @@ export class View {
 
           this.undoButton.disabled = false;
           // set turn status in localStorage
-          if (gameType === 'singleplayer')
-            localStorage.setItem('turnStatus', 'playedToken');
+
+          localStorage.setItem('turnStatus', 'playedToken');
         }
 
         // save move information for undo
@@ -244,22 +240,21 @@ export class View {
           targetSpace: targetSpace
         };
         this.movesArr.push(undoMoveObj);
-        if (gameType === 'singleplayer') {
-          // Save move information to localStorage. We can't save the HTMLElement directoy
-          // because card elements have children which won't be included in the JSON object.
-          // We could make a custom method to jsonify the children elements, but it's easier
-          // to just find the elements on the page by id later.
-          const undoMovesArr = localStorage.getItem('undoMoves')
-            ? JSON.parse(localStorage.getItem('undoMoves')!)
-            : [];
-          undoMovesArr.push({
-            draggedEle: undoMoveObj.draggedEle.id
-              ? undoMoveObj.draggedEle.id
-              : 'influenceToken',
-            targetSpace: undoMoveObj.targetSpace.id
-          });
-          localStorage.setItem('undoMoves', JSON.stringify(undoMovesArr));
-        }
+
+        // Save move information to localStorage. We can't save the HTMLElement directoy
+        // because card elements have children which won't be included in the JSON object.
+        // We could make a custom method to jsonify the children elements, but it's easier
+        // to just find the elements on the page by id later.
+        const undoMovesArr = localStorage.getItem('undoMoves')
+          ? JSON.parse(localStorage.getItem('undoMoves')!)
+          : [];
+        undoMovesArr.push({
+          draggedEle: undoMoveObj.draggedEle.id
+            ? undoMoveObj.draggedEle.id
+            : 'influenceToken',
+          targetSpace: undoMoveObj.targetSpace.id
+        });
+        localStorage.setItem('undoMoves', JSON.stringify(undoMovesArr));
       });
     });
 
@@ -290,7 +285,7 @@ export class View {
         if (this.movesArr.length > 0) {
           moveObj = this.movesArr.pop()!;
           const undoMovesJSON = localStorage.getItem('undoMoves');
-          if (undoMovesJSON && gameType === 'singleplayer') {
+          if (undoMovesJSON) {
             const undoMoves = JSON.parse(undoMovesJSON);
             undoMoves.pop();
             localStorage.setItem('undoMoves', JSON.stringify(undoMoves));
@@ -330,8 +325,8 @@ export class View {
           this.undoButton.disabled = true;
           this.endTurnButton.disabled = true;
           // update turn status in storage for resuming game
-          if (gameType === 'singleplayer')
-            localStorage.removeItem('turnStatus');
+
+          localStorage.removeItem('turnStatus');
           // if it's a token, leave undo button active.
         } else if (cardOrTokenToUndo?.classList.contains('influenceToken')) {
           targetSpace.removeChild(cardOrTokenToUndo);
@@ -341,8 +336,8 @@ export class View {
           }
           this.enableTokenDragging();
           // update turn status in storage for resuming game
-          if (gameType === 'singleplayer')
-            localStorage.setItem('turnStatus', 'playedCard');
+
+          localStorage.setItem('turnStatus', 'playedCard');
         }
       }
     });
@@ -568,7 +563,7 @@ export class View {
       // show game over message
       this.gameOverBox.style.visibility = 'visible';
       // if this was a single player game, reset local storage copy of in progress game
-      if (this.resetStorage && gameType === 'singleplayer') this.resetStorage();
+      if (this.resetStorage) this.resetStorage();
       if (this.currPlyrID === 'Player 1' && this.addRecordtoDB)
         this.addRecordtoDB();
       return true;

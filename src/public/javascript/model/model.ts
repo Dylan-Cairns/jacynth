@@ -173,25 +173,13 @@ export class SinglePlayerGameModel extends GameModel {
       user1Score: this.currPlyr.getScore(),
       user2ID: this.opposPlyr.aiDifficulty,
       user2Score: this.opposPlyr.getScore(),
-      layout: this.layout
+      layout: this.layout,
+      date: new Date().toUTCString()
     };
 
-    (async () => {
-      try {
-        const response = await fetch('/rest/storeSPGameResult', {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          },
-          method: 'post',
-          body: JSON.stringify(gameResults)
-        });
-
-        const message = await response;
-        console.log(message);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
+    const scores_json = localStorage.getItem('scoresHistory');
+    const scores = (scores_json && JSON.parse(scores_json)) || [];
+    scores.push(gameResults);
+    localStorage.setItem('scoresHistory', scores);
   };
 }
