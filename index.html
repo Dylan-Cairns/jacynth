@@ -1,0 +1,372 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <base href="." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans&amp;display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" type="text/css" href="css/styles.css" />
+  <link
+    href="assets/fortune_widgets.ttf"
+    rel="stylesheet preload"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+  <link
+    href="assets/fortune-letters.ttf"
+    rel="stylesheet preload"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+  <link rel="icon" href="assets/favicon.ico" />
+</head>
+<div class="menu-popup dark_shadow" id="nickNameFormContainer">
+  <form class="formTitle" id="nickNameForm">
+    <label for="nickname">Choose a display name</label>
+    <p></p>
+    <div class="subtext">
+      Display name should be between 5-20 characters and consist of letters and
+      numbers
+    </div>
+    <p></p>
+    <input
+      id="nickTextField"
+      type="text"
+      name="nickname"
+      placeholder="nickname"
+    />
+    <p></p>
+    <div id="nickFormButtons">
+      <div class="menu-button light_shadow">
+        <input
+          class="nickButton"
+          id="nickSubmitButton"
+          type="submit"
+          value="OK"
+        />
+      </div>
+      <div class="menu-button light_shadow" id="cancelButton">
+        <button class="nickButton" id="cancelBttn">Cancel</button>
+      </div>
+    </div>
+  </form>
+  <div class="light_shadow" id="resultDiv"></div>
+</div>
+<audio id="pickupSound" src="assets/pickupsound.wav" preload="auto"></audio>
+<audio id="dropSound" src="assets/switch8.wav" preload="auto"></audio>
+<div class="main-grid">
+  <div class="menuBar">
+    <a class="menuBar-item title" href="/">Jacynth</a>
+    <div class="menuBar-item">
+      <button class="menu-button light_shadow" id="menuButton">
+        <span
+          ><svg style="width: 24px; height: 24px" viewBox="0 0 24 24">
+            <path
+              fill="currentColor"
+              d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"
+            /></svg
+        ></span>
+      </button>
+    </div>
+  </div>
+  <div class="gameboard dark_shadow"></div>
+  <div class="HUD-container enemyHUD">
+    <div class="playerIcon dark_shadow" id="enemyIcon"></div>
+    <div class="HUDText dark_shadow">
+      <div class="HUDelement name enemy" id="enemyID">waiting</div>
+      <div class="HUDelement" id="enemyHUD">Score 0 Tokens 4</div>
+    </div>
+  </div>
+  <div class="HUD-container playerHUD">
+    <div class="playerIcon dark_shadow" id="playerIcon"></div>
+    <div class="HUDText dark_shadow">
+      <div class="HUDelement name player" id="playerID">waiting</div>
+      <div class="HUDelement" id="playerHUD">Score 0 Tokens 4</div>
+    </div>
+  </div>
+  <div class="player-hand-container">
+    <div id="gameOverBox">
+      <span>Game Over</span><span id="winnerText"></span>
+    </div>
+    <div id="disconnectedBox">
+      <span>Disconnected</span
+      ><span id="disconnectedInfo"
+        >Game aborted. Yourself or the opponent disconnected.</span
+      >
+    </div>
+    <div class="player-hand dark_shadow">
+      <div class="influenceTokenContainer"></div>
+    </div>
+    <div class="button-container dark_shadow">
+      <button class="inGameButton" id="undoButton" type="button" disabled="">
+        undo
+      </button>
+      <button class="inGameButton" id="endTurnButton" type="button" disabled="">
+        end<br />turn
+      </button>
+    </div>
+  </div>
+</div>
+<div id="overlay"></div>
+<div class="menu-popup modal dark_shadow" id="menu-popup">
+  <button class="close" id="closeMenuButton" href="#">&times;</button>
+  <div class="menu-header">
+    Jacynth<br /><span class="subheader">A Decktet Game</span>
+  </div>
+  <div class="menu-button light_shadow" id="singlePlayerBttn">
+    <a href="/singleplayer" id="newGameBttn">New Game</a>
+  </div>
+  <div class="menu-button light_shadow" id="singlePlayerResumeBttn">
+    <a href="/singleplayer">Resume Game</a>
+  </div>
+  <div class="menu-button light_shadow" id="highScoresButton">
+    <a href="/highscores">High Scores</a>
+  </div>
+  <div class="menu-button light_shadow" id="rulesButton">
+    <button>Rules &amp; Credits</button>
+  </div>
+</div>
+<div class="menu-popup modal dark_shadow" id="howToPlayInfo">
+  Drag a card from your hand to the board to play. After placing a card you may
+  optionally place 1 of your 4 influence tokens. Click any influence token
+  already on the board to see the district under it's control. The full game
+  rules are available in the menu.
+  <div class="menu-button" id="howToPlayButton">
+    <button>OK</button>
+  </div>
+</div>
+<div id="newGameOptionsOverlay"></div>
+<div class="menu-popup modal dark_shadow" id="newGameOptionsModal">
+  <form id="gameOptionsForm">
+    <p id="difficultyTitle">Difficulty</p>
+    <div id="difficulty">
+      <input
+        id="easyAI"
+        type="radio"
+        name="difficulty"
+        value="easyAI"
+        checked="checked"
+      />
+      <label for="easyAI">
+        <div class="layoutButton light_shadow">Easy</div>
+      </label>
+      <input id="mediumAI" type="radio" name="difficulty" value="mediumAI" />
+      <label for="mediumAI">
+        <div class="layoutButton light_shadow">Medium</div>
+      </label>
+    </div>
+    <p>Starting layout</p>
+    <div id="layoutRadioBttns">
+      <input
+        id="razeway"
+        type="radio"
+        name="layout"
+        value="razeway"
+        checked="checked"
+      />
+      <label for="razeway"
+        ><img
+          class="layoutButton light_shadow"
+          src="./assets/razeway.png"
+          alt="razeway"
+      /></label>
+      <input id="towers" type="radio" name="layout" value="towers" />
+      <label for="towers"
+        ><img
+          class="layoutButton light_shadow"
+          src="./assets/towers.png"
+          alt="towers"
+      /></label>
+      <input id="oldcity" type="radio" name="layout" value="oldcity" />
+      <label for="oldcity"
+        ><img
+          class="layoutButton light_shadow"
+          src="./assets/oldcity.png"
+          alt="oldcity"
+      /></label>
+    </div>
+    <p>
+      <button class="menu-button light_shadow" type="submit">Start game</button>
+    </p>
+  </form>
+</div>
+<div class="modal dark_shadow" id="rules">
+  <div class="rules-content modal">
+    <button class="rules-close" id="closeRulesButton" href="#">&times;</button
+    ><img id="dinner" src="./assets/dinner.png" />
+    <h1 id="the-decktet">The Decktet</h1>
+    <blockquote>
+      <p>
+        <em
+          >The Decktet is a magical thing from another world, a six-suited deck
+          of cards that can be used to play dozens of different games.</em
+        >
+      </p>
+    </blockquote>
+    <p>
+      You can learn more about the Decktet and other games at
+      <a class="link" href="https://www.decktet.com/">Decktet.com</a>.
+    </p>
+    <p>The 36 card basic deck is composed of the following suits and ranks:</p>
+    <p><img src="../assets/suits_ranks_basic.png" /></p>
+    <h1 id="jacynth---a-territory-control-decktet-game">
+      Jacynth - A territory control Decktet game
+    </h1>
+    <blockquote>
+      <p>
+        <em
+          >Jacynth is among the oldest cities, and a map of its streets is a
+          record of history. It is a haphazard maze of overlapping interests and
+          neighborhoods, with intricate social bonds tying one block to the
+          next. You could control the city if you could control a nexus in that
+          maze of ancient intrigue, but first you would have to find it.</em
+        >
+      </p>
+    </blockquote>
+    <p>
+      <strong>Object of the game:</strong> During a game of Jacynth, cards are
+      laid out to form a six-by-six grid that represents the city. Players claim
+      areas by placing influence tokens on cards, aiming to control more of the
+      city than their opponents.
+    </p>
+    <h3 id="districts">Districts</h3>
+    <p>
+      A district is a group of cards that share a suit symbol and are adjacent
+      to one another. For example, three cards that have Sun suits laid in a
+      row, one next to another, would form a district. The cards in a district
+      need not be in a straight line, but each card must share an edge with
+      another card in the district. Districts do not connect across diagonals or
+      across open spaces that do not have cards in them yet.
+    </p>
+    <p>
+      A number card (since it has two suits) may be part of two separate
+      districts; one for each suit.
+    </p>
+    <p>
+      A player controls a district when they have an influence token on a card
+      in that district.
+    </p>
+    <p>
+      You cannot place an influence token in a district already controlled by an
+      opponent, but it is possible that subsequent card play will connect what
+      had been two separate districts. If this happens, then the player with
+      whose token is on the higher ranked card controls the district. Crowns
+      beat 9s; 2s beat Aces.
+    </p>
+    <p>
+      If you have more than one token in a district, the card ranks do not add
+      together; only the highest ranked card counts for district control.
+    </p>
+    <p>
+      <strong>Example of control:</strong> Aaron has a token on the 8 of Moons
+      and Suns. Beryl has a token on the Crown of Moons. By a chain of Moon
+      cards, the two cards become part of the same district. The Crown is the
+      higher ranked card, so Beryl controls the Moon district. Beryl&apos;s
+      token is not on a card Suns card, so Aaron still controls the Sun district
+      that includes the 8.
+    </p>
+    <h3 id="game-play">Game play</h3>
+    <p>
+      Players take turns, starting with the player on the dealer&apos;s left.
+    </p>
+    <p>
+      On your turn, you begin by adding a card to the city. Then you may place
+      an influence token, although you are not required to do so. Finally, draw
+      a card.
+    </p>
+    <p>Here are the details on all that:</p>
+    <p>
+      <strong>Explore the city.</strong> Select a card from your hand and play
+      it face up on the table, adjacent to one of the cards already in play. You
+      must place it within the grid of the city.
+    </p>
+    <p>
+      <strong>Exert influence.</strong> If you have influence tokens remaining,
+      you may place one on a card in play.
+    </p>
+    <p>
+      You may not place an influence token on a card that is part of a district
+      controlled by another player. This restriction applies even if the card
+      has another suit that also makes it part of second district, where only
+      one of the districts in controlled. You may, however, place an influence
+      token on a card that is part of a district you already control. This can
+      be a good idea if the card is part of an uncontrolled second district.
+    </p>
+    <p>
+      You may not place more than one influence token per turn. You may place
+      influence on the card you added this turn or on another card, even on one
+      of the starting cards.
+    </p>
+    <p><strong>Draw a card.</strong> Drawing a card ends your turn.</p>
+    <p>
+      After the deck is depleted, play continues until thirty-six cards have
+      been played and the final player&apos;s turn is complete.
+    </p>
+    <h3 id="scoring">Scoring</h3>
+    <p>
+      At the end of the game, you score points for each district you control:
+      One point for each card that comprises the district.
+    </p>
+    <p>
+      There is no bonus or special advantage for having more than one influence
+      token in a district, and no effect from unplaced influence tokens
+      remaining at the end of the hand.
+    </p>
+    <p>
+      Note that a district may consist of a single card, if that card is not
+      adjacent to any that share a suit with it. A single isolated Ace or Crown
+      would be worth one point to a player who had a token on it. A single
+      isolated number card comprises two single card districts, one for each
+      suit, and would be worth two points.
+    </p>
+    <h1 id="credits">Credits</h1>
+    <p>
+      The <a class="link" href="http://www.decktet.com/">Decktet</a>, the
+      accompanying artwork, and the game Jacynth were created by P.D. Magnus and
+      are offered as open content under a
+      <a class="link" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+        >Creative Commons Attribution NonCommercial ShareAlike 4.0 License</a
+      >.
+    </p>
+    <p>
+      The background texture &apos;funky lines&apos; was created by Shiva and
+      offered under the CC BY-SA 3.0 license at
+      <a
+        class="link"
+        href="https://www.toptal.com/designers/subtlepatterns/funky-lines/"
+        >Subtle Patterns</a
+      >
+    </p>
+    <p>
+      This adaptation of the Jacynth game was created by Dylan Cairns and is
+      released under the CC BY-SA 4.0 License. The code can be found on
+      <a class="link" href="https://github.com/Dylan-Cairns/Jacynth_game"
+        >Github</a
+      >.
+    </p>
+    <p>
+      HTML5 Drag and drop mobile polyfill code is Copyright (c) 2016 Bernardo
+      Castilho under an MIT license. Find it on
+      <a class="link" href="https://github.com/Bernardo-Castilho/dragdroptouch"
+        >Github</a
+      >.
+    </p>
+  </div>
+</div>
+<div class="active" id="loadScreen">
+  <span id="spinner"
+    ><svg style="width: 81px; height: 81px" viewBox="0 0 24 24">
+      <path
+        fill="currentColor"
+        d="M12 2C17.5 2 22 6.5 22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2M12 4C7.58 4 4 7.58 4 12C4 16.42 7.58 20 12 20C16.42 20 20 16.42 20 12C20 7.58 16.42 4 12 4M12 5C13.93 5 15.68 5.78 16.95 7.05L12 12V5Z"
+      /></svg
+  ></span>
+</div>
+<script type="module" src="javascript/game.js"></script>
+<script src="javascript/DragDropTouch.js"></script>
