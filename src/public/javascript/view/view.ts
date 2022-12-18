@@ -399,20 +399,20 @@ export class View {
       return Promise.all(promises);
     };
     const srcArr = [
-      '../assets/suns.svg',
-      '../assets/moons.svg',
-      '../assets/wyrms.svg',
-      '../assets/knots.svg',
-      '../assets/leaves.svg',
-      '../assets/waves.svg',
-      '../assets/meeple_player.svg',
-      '../assets/meeple_enemy.svg',
-      '../assets/sailor_losing.svg',
-      '../assets/penitent_losing.svg',
-      '../assets/sailor_winning.svg',
-      '../assets/penitent_winning.svg',
-      '../assets/dinner.png',
-      '../assets/suits_ranks_basic.png'
+      'assets/suns.svg',
+      'assets/moons.svg',
+      'assets/wyrms.svg',
+      'assets/knots.svg',
+      'assets/leaves.svg',
+      'assets/waves.svg',
+      'assets/meeple_player.svg',
+      'assets/meeple_enemy.svg',
+      'assets/sailor_losing.svg',
+      'assets/penitent_losing.svg',
+      'assets/sailor_winning.svg',
+      'assets/penitent_winning.svg',
+      'assets/dinner.png',
+      'assets/suits_ranks_basic.png'
     ];
     preloadImages(srcArr).then(
       (imgs) => {
