@@ -14,3 +14,7 @@ viewRouter.get('/singleplayer', (req, res) => {
 viewRouter.get('/highscores', (req, res) => {
   res.render('highscores');
 });
+
+viewRouter.get('/profile', (req, res) => {
+  res.render('profile');
+});

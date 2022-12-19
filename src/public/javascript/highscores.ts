@@ -1,7 +1,6 @@
-import { MainMenuHandler, TabsHandler, populateTable } from './view/utils.js';
+import { MainMenuHandler, populateTable } from './view/utils.js';
 
 const mainMenuHandler = new MainMenuHandler(false);
-const tabsHandler = new TabsHandler();
 
 const savedScores = localStorage.getItem('scoresHistory');
 

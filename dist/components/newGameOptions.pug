@@ -2,6 +2,16 @@
 
 #newGameOptionsModal.menu-popup.modal.dark_shadow
   form#gameOptionsForm
+    p Token color
+    #tokenRadioBttns
+      input#green(type='radio', name='tokenColor', value='green' checked)
+      label(for='green')
+        img.tokenButton.light_shadow(src="./assets/meeple_player.svg" alt='green')
+
+      input#red(type='radio', name='tokenColor', value='red')
+      label(for='red')
+        img.tokenButton.light_shadow(src="./assets/meeple_enemy.svg" alt='red')
+    
     p#difficultyTitle Difficulty
     #difficulty
       input#easyAI(type='radio', name='difficulty', value='easyAI' checked)

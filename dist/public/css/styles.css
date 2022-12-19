@@ -1040,6 +1040,13 @@ a:hover {
   justify-content: center;
 }
 
+#tokenRadioButtons {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-self: center;
+  justify-content: center;
+}
+
 input[type='radio'] {
   display: none;
 }
@@ -1086,6 +1093,16 @@ input[type='radio']:checked + label > img {
   /* justify-self: center; */
 }
 
+.tokenButton {
+  padding: 10px;
+  margin: 10px;
+  background: rgb(163, 163, 163);
+  width: calc(0.1 * var(--gameboard-width));
+  height: calc(0.1 * var(--gameboard-width));
+  border-radius: var(--border-radius);
+  /* justify-self: center; */
+}
+
 .layoutButton img {
   width: 100%;
 }
@@ -1121,7 +1138,7 @@ input[type='radio']:checked + label > img {
 }
 
 .rules-content {
-  margin: 10px 0px;
+  margin: 20px 0px;
   font-family: 'Open Sans', sans-serif;
   font-size: 1.2rem;
   width: var(--gameboard-width);
@@ -1167,6 +1184,56 @@ input[type='radio']:checked + label > img {
 .rules-content h3 {
   text-align: center;
   font-family: 'Fortune Letters', Futura, Geneva, sans-serif;
+}
+
+/* Scores modal styling */
+#scores {
+  z-index: -1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  transition: 200ms ease-in-out;
+  display: grid;
+  justify-content: stretch;
+  justify-items: center;
+  align-items: start;
+  height: 100vh;
+  overflow-y: auto;
+  pointer-events: none;
+}
+
+#scores.active {
+  opacity: 1;
+  pointer-events: all;
+  z-index: 50;
+}
+
+.scores-content {
+  margin: 20px 0px;
+  width: var(--gameboard-width);
+  background-color: whitesmoke;
+  padding: 25px;
+  border-radius: var(--border-radius);
+  position: relative;
+  text-justify: auto;
+}
+
+.scores-close {
+  position: absolute;
+  top: 0px;
+  right: 15px;
+  font-size: 25px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+  cursor: pointer;
+}
+
+.scores-close:hover {
+  color: var(--icon-text-color);
 }
 
 /* Load screen styling */

@@ -3,8 +3,11 @@ import { Layout } from '../model/model.js';
 import { Card } from '../model/decktet.js';
 import { AIDifficulty, PlayerID } from '../model/player.js';
 
+export type tokenColor = 'green' | 'red';
+
 export class View {
   currPlyrID: PlayerID;
+  playerTokenColor: tokenColor;
   opposPlrID: PlayerID;
   app: Element;
   gameBoard: HTMLElement;
@@ -59,6 +62,7 @@ export class View {
 
   constructor(board: GameBoard, currPlyrID: PlayerID, opposPlyrID: PlayerID) {
     this.currPlyrID = currPlyrID;
+    this.playerTokenColor = 'green';
     this.opposPlrID = opposPlyrID;
     this.app = document.querySelector('#root')! as HTMLElement;
     this.gameBoard = document.querySelector('.gameboard')! as HTMLElement;
@@ -134,10 +138,10 @@ export class View {
     // - a new single player game (not restoring from backup)
     // - a multiplayer game
 
-    if (!localStorage.getItem('layout')) {
-      const token = this.createPlayerToken();
-      this.influenceTokenContainer.appendChild(token);
-    }
+    // if (!localStorage.getItem('layout')) {
+    //   const token = this.createPlayerToken();
+    //   this.influenceTokenContainer.appendChild(token);
+    // }
 
     // drag and drop methods
     const boardSpaces = document.querySelectorAll('.boardSpace');
@@ -489,7 +493,8 @@ export class View {
   };
 
   protected createPlayerToken() {
-    const tokenID = this.currPlyrID === 'Player 1' ? 'Player1' : 'Player2';
+    // hack existing token color system to allow customization. I should update the css with colors instead of player IDs
+    const tokenID = this.playerTokenColor === 'green' ? 'Player1' : 'Player2';
     const token = this.createElement(
       'div',
       'influenceToken',
@@ -500,7 +505,7 @@ export class View {
   }
 
   protected createEnemyToken() {
-    const tokenID = this.currPlyrID === 'Player 1' ? 'Player2' : 'Player1';
+    const tokenID = this.playerTokenColor === 'green' ? 'Player2' : 'Player1';
     return this.createElement(
       'div',
       'influenceToken',
@@ -594,6 +599,10 @@ export class View {
         ele.classList.add('draggable');
       }
     });
+  }
+
+  public setPlayerTokenColor(tokenColor: tokenColor) {
+    this.playerTokenColor = tokenColor;
   }
 
   protected disableAllCardDragging() {
@@ -709,6 +718,7 @@ export class View {
 
   public restoreGame = () => {
     this.updateScore();
+
     const handJSON = localStorage.getItem(`${this.currPlyrID}-hand`);
 
     const turnState = localStorage.getItem('turnStatus');
@@ -878,6 +888,15 @@ export class SinglePlayerView extends View {
       radioElement.checked = true;
     }
 
+    const tokenColor = localStorage.getItem('tokenColor');
+
+    if (tokenColor) {
+      const radioElement = document.getElementById(
+        tokenColor
+      ) as HTMLInputElement;
+      radioElement.checked = true;
+    }
+
     // if no game data in local storage, show new game layout menu.
     // if there IS game data, the view will be filled with the existing data,
     // which will be triggered from the controller.
@@ -896,6 +915,8 @@ export class SinglePlayerView extends View {
 
       const layoutChoice = formData.get('layout') as Layout;
       const aiDifficulty = formData.get('difficulty') as AIDifficulty;
+      const tokenColor = formData.get('tokenColor') as tokenColor;
+      this.playerTokenColor = tokenColor ? tokenColor : this.playerTokenColor;
 
       if (!layoutChoice || !aiDifficulty || !this.startGame) return;
       // set difficulty setting in localstorage, for restoring
@@ -903,6 +924,11 @@ export class SinglePlayerView extends View {
       // in the new game menu
       localStorage.setItem('difficulty', aiDifficulty);
       localStorage.setItem('layoutChoice', layoutChoice);
+      localStorage.setItem('tokenColor', this.playerTokenColor);
+
+      const token = this.createPlayerToken();
+      this.influenceTokenContainer.appendChild(token);
+
       this.startGame(layoutChoice, aiDifficulty);
     });
   }

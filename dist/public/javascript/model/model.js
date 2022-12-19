@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { GameBoard } from './gameboard.js';
 import { Decktet } from './decktet.js';
 import { Player_SinglePlayer, Player_ComputerPlayer } from './player.js';
@@ -43,22 +34,24 @@ export class SinglePlayerGameModel extends GameModel {
             localStorage.removeItem(`Player 1-hand`);
             localStorage.removeItem(`Computer-hand`);
         };
-        this.addRecordtoDB = () => __awaiter(this, void 0, void 0, function* () {
+        this.addRecordtoDB = () => {
             // user1 ID will either be guest or authenticated user ID.
             // that determination is handled server side,
             // so user1ID is not added here.
-            const gameResults = {
-                user1Score: this.currPlyr.getScore(),
-                user2ID: this.opposPlyr.aiDifficulty,
-                user2Score: this.opposPlyr.getScore(),
-                layout: this.layout,
-                date: new Date().toUTCString()
-            };
             const scores_json = localStorage.getItem('scoresHistory');
             const scores = (scores_json && JSON.parse(scores_json)) || [];
+            const gameResults = {
+                'Your Score': this.currPlyr.getScore(),
+                Opponent: this.opposPlyr.aiDifficulty,
+                'Opponent Score': this.opposPlyr.getScore(),
+                Layout: this.layout,
+                Date: new Date().toUTCString(),
+                Result: this.currPlyr.getScore() > this.opposPlyr.getScore() ? 'Won' : 'Lost',
+                '#': scores.length + 1
+            };
             scores.push(gameResults);
-            localStorage.setItem('scoresHistory', scores);
-        });
+            localStorage.setItem('scoresHistory', JSON.stringify(scores));
+        };
         this.currPlyr = new Player_SinglePlayer('Player 1', gameType, this.board, this.deck);
         this.opposPlyr = new Player_ComputerPlayer('Computer', gameType, this.board, this.deck, 'Player 1', this.currPlyr.getInfluenceTokensNo, this.currPlyr.placeToken, this.currPlyr.undoPlaceToken);
     }

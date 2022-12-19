@@ -36,6 +36,9 @@ export class SinglePlayerController {
         // if there is existing game data in local storage, restore the
         // in progress game.
         if (localStorage.getItem('layout')) {
+            const tokenColor = localStorage.getItem('tokenColor') ||
+                'green';
+            this.view.setPlayerTokenColor(tokenColor);
             this.model.restoreGame();
             this.view.restoreGame();
         }

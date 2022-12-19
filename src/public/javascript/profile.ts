@@ -11,225 +11,102 @@ declare class Plotly {
   static newPlot(arg0: string, data: any, layout: any, config: any): any;
 }
 
-declare const hasNick: boolean;
+const savedScores = localStorage.getItem('scoresHistory');
 
-const mainMenuHandler = new MainMenuHandler(false);
-const nickNameFormHandler = new NickNameFormHandler(!hasNick, true);
-const tabsHandler = new TabsHandler();
+const SPgameData = savedScores ? JSON.parse(savedScores) : [];
 
-// Load SP and MP data from DB
+if (SPgameData.length > 0) {
+  // create sp game data table
+  populateTable(SPgameData, 'SPGameRecords');
 
-(async () => {
-  let SPgameData;
-  try {
-    const response = await fetch('/rest/getSPGameRecords');
-    SPgameData = await response.json();
-  } catch (error) {
-    console.log(error);
-  }
+  const spHighScore = getHighScore(SPgameData);
+  const spHighScoreDiv = document.getElementById('spHighScore');
+  if (spHighScoreDiv) spHighScoreDiv.innerHTML += spHighScore;
 
-  if (SPgameData.length > 0) {
-    // create sp game data table
-    populateTable(SPgameData, 'SPGameRecords');
+  const spWinningStreak = getWinningStreak(SPgameData);
+  const spStreakDiv = document.getElementById('spStreak');
+  if (spStreakDiv) spStreakDiv.innerHTML += spWinningStreak;
 
-    const spHighScore = getHighScore(SPgameData);
-    const spHighScoreDiv = document.getElementById('spHighScore');
-    if (spHighScoreDiv) spHighScoreDiv.innerHTML += spHighScore;
+  const winsLosses = getWinsLosses(SPgameData);
+  const pieChartLabels = Object.keys(winsLosses);
+  const pieChartValues = Object.values(winsLosses);
 
-    const spWinningStreak = getWinningStreak(SPgameData);
-    const spStreakDiv = document.getElementById('spStreak');
-    if (spStreakDiv) spStreakDiv.innerHTML += spWinningStreak;
-
-    const winsLosses = getWinsLosses(SPgameData);
-    const pieChartLabels = Object.keys(winsLosses);
-    const pieChartValues = Object.values(winsLosses);
-
-    const pieChartData = [
-      {
-        type: 'pie',
-        values: pieChartValues,
-        labels: pieChartLabels,
-        textinfo: 'label+percent',
-        insidetextorientation: 'radial',
-        automargin: true,
-        marker: {
-          colors: [
-            'rgb(56, 75, 126)',
-            'rgb(18, 36, 37)',
-            'rgb(34, 53, 101)',
-            'rgb(36, 55, 57)',
-            'rgb(6, 4, 4)'
-          ]
-        }
+  const pieChartData = [
+    {
+      type: 'pie',
+      values: pieChartValues,
+      labels: pieChartLabels,
+      textinfo: 'label+percent',
+      insidetextorientation: 'radial',
+      automargin: true,
+      marker: {
+        colors: [
+          'rgb(56, 75, 126)',
+          'rgb(18, 36, 37)',
+          'rgb(34, 53, 101)',
+          'rgb(36, 55, 57)',
+          'rgb(6, 4, 4)'
+        ]
       }
-    ] as any;
+    }
+  ] as any;
 
-    const pieChartLayout = {
-      title: 'Wins/Losses',
-      showlegend: false
-    };
+  const pieChartLayout = {
+    title: 'Wins/Losses',
+    showlegend: false
+  };
 
-    const pieChartConfig = { responsive: true };
+  const pieChartConfig = { responsive: true };
 
-    Plotly.newPlot('spPieChart', pieChartData, pieChartLayout, pieChartConfig);
+  Plotly.newPlot('spPieChart', pieChartData, pieChartLayout, pieChartConfig);
 
-    const spPlayerScores = [] as number[];
-    const spOpponentScores = [] as number[];
-    const spGameNumber = [] as number[];
-    SPgameData.forEach((row: any) => {
-      spPlayerScores.push(row['Your Score']);
-      spOpponentScores.push(row['Opponent Score']);
-      spGameNumber.push(row['#']);
-    });
+  const spPlayerScores = [] as number[];
+  const spOpponentScores = [] as number[];
+  const spGameNumber = [] as number[];
+  SPgameData.forEach((row: any) => {
+    spPlayerScores.push(row['Your Score']);
+    spOpponentScores.push(row['Opponent Score']);
+    spGameNumber.push(row['#']);
+  });
 
-    const trace1 = {
-      x: spGameNumber,
-      y: spPlayerScores,
-      name: 'You',
-      type: 'bar'
-    };
+  const trace1 = {
+    x: spGameNumber,
+    y: spPlayerScores,
+    name: 'You',
+    type: 'bar'
+  };
 
-    const trace2 = {
-      x: spGameNumber,
-      y: spOpponentScores,
-      name: 'Opponent',
-      type: 'bar'
-    };
+  const trace2 = {
+    x: spGameNumber,
+    y: spOpponentScores,
+    name: 'Opponent',
+    type: 'bar'
+  };
 
-    const data = [trace1, trace2];
+  const data = [trace1, trace2];
 
-    Plotly.newPlot(
-      'spPieChart2',
-      data,
-      {
-        title: 'Scores',
-        xaxis: { title: 'Game #' },
-        yaxis: {
-          title: 'Points'
-        },
-        barmode: 'group'
+  Plotly.newPlot(
+    'spPieChart2',
+    data,
+    {
+      title: 'Scores',
+      xaxis: { title: 'Game #' },
+      yaxis: {
+        title: 'Points'
       },
-      { responsive: true }
-    );
-  }
+      barmode: 'group'
+    },
+    { responsive: true }
+  );
+}
 
-  let MPgameData;
-  try {
-    const response = await fetch('/rest/getMPGameRecords');
-    MPgameData = await response.json();
-  } catch (error) {
-    console.log(error);
-  }
+// Remove active class from multiplayer grid container to set it's display to none.
+// Initially loading the page without the active class will cause plotly
+// To render the charts at an incorrect size.
 
-  if (MPgameData.length > 0) {
-    // create sp game data table
-    populateTable(MPgameData, 'MPGameRecords');
-
-    const mpHighScore = getHighScore(MPgameData);
-    const mpHighScoreDiv = document.getElementById('mpHighScore');
-    if (mpHighScoreDiv) mpHighScoreDiv.innerHTML += mpHighScore;
-
-    const mpWinningStreak = getWinningStreak(MPgameData);
-    const mpStreakDiv = document.getElementById('mpStreak');
-    if (mpStreakDiv) mpStreakDiv.innerHTML += mpWinningStreak;
-
-    const winsLosses = getWinsLosses(MPgameData);
-    const pieChartLabels = Object.keys(winsLosses);
-    const pieChartValues = Object.values(winsLosses);
-
-    const pieChartData = [
-      {
-        type: 'pie',
-        values: pieChartValues,
-        labels: pieChartLabels,
-        textinfo: 'label+percent',
-        insidetextorientation: 'radial',
-        automargin: true,
-        marker: {
-          colors: [
-            'rgb(56, 75, 126)',
-            'rgb(18, 36, 37)',
-            'rgb(34, 53, 101)',
-            'rgb(36, 55, 57)',
-            'rgb(6, 4, 4)'
-          ]
-        }
-      }
-    ] as any;
-
-    const pieChartLayout = {
-      title: 'Wins/Losses',
-      showlegend: false
-    };
-
-    const pieChartConfig = { responsive: true };
-
-    Plotly.newPlot('mpPieChart', pieChartData, pieChartLayout, pieChartConfig);
-
-    const mpPlayerScores = [] as number[];
-    const mpOpponentScores = [] as number[];
-    const mpGameNumber = [] as number[];
-    MPgameData.forEach((row: any) => {
-      mpPlayerScores.push(row['Your Score']);
-      mpOpponentScores.push(row['Opponent Score']);
-      mpGameNumber.push(row['#']);
-    });
-
-    const trace1 = {
-      x: mpGameNumber,
-      y: mpPlayerScores,
-      name: 'You',
-      type: 'bar'
-    };
-
-    const trace2 = {
-      x: mpGameNumber,
-      y: mpOpponentScores,
-      name: 'Opponent',
-      type: 'bar'
-    };
-
-    const data = [trace1, trace2];
-
-    Plotly.newPlot(
-      'mpPieChart2',
-      data,
-      {
-        title: 'Scores',
-        xaxis: { title: 'Game #' },
-        yaxis: {
-          title: 'Points'
-        },
-        barmode: 'group'
-      },
-      { responsive: true }
-    );
-  }
-
-  // Remove active class from multiplayer grid container to set it's display to none.
-  // Initially loading the page without the active class will cause plotly
-  // To render the charts at an incorrect size.
-  document.getElementById('mpGridContainer')?.classList.remove('active');
-
-  // Display nickname
-  let nickResult;
-  try {
-    const response = await fetch('/rest/getUserNick');
-    nickResult = await response.json();
-  } catch (error) {
-    console.log(error);
-  }
-
-  if (nickResult.length > 0) {
-    console.log(nickResult);
-    const nickDiv = document.getElementById('nickname');
-    if (nickDiv) nickDiv.innerHTML += nickResult[0].nickname;
-  }
-
-  // remove load screen after data finished loading
-  document.getElementById('spinner')!.style.visibility = 'hidden';
-  document.getElementById('loadScreen')!.classList.remove('active');
-})();
+// remove load screen after data finished loading
+document.getElementById('spinner')!.style.visibility = 'hidden';
+document.getElementById('loadScreen')!.classList.remove('active');
 
 function getHighScore(records: Record<string, number>[]) {
   return records.reduce((acc: number, row: Record<string, number>) => {
