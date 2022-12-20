@@ -3,7 +3,6 @@ import path from 'path';
 import http from 'http';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { Server } from 'socket.io';
 
 import { viewRouter } from './routes/views.js';
 
@@ -15,7 +14,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = 3000;
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
 
 app.set('views', path.join(__dirname, 'views'));
 console.log(path.join(__dirname, 'views'));
