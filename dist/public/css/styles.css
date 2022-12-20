@@ -824,22 +824,22 @@ table td::before {
 }
 
 .Knots {
-  background-image: url('../assets/knots.svg');
+  background-image: url('dist/public/assets/knots.svg');
 }
 .Leaves {
-  background-image: url('../assets/leaves.svg');
+  background-image: url('dist/public/assets/leaves.svg');
 }
 .Moons {
-  background-image: url('../assets/moons.svg');
+  background-image: url('dist/public/assets/moons.svg');
 }
 .Suns {
-  background-image: url('../assets/suns.svg');
+  background-image: url('dist/public/assets/suns.svg');
 }
 .Waves {
-  background-image: url('../assets/waves.svg');
+  background-image: url('dist/public/assets/waves.svg');
 }
 .Wyrms {
-  background-image: url('../assets/wyrms.svg');
+  background-image: url('dist/public/assets/wyrms.svg');
 }
 
 a {
