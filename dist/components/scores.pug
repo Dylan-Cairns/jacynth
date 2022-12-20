@@ -1,0 +1,16 @@
+#scores.modal.dark_shadow
+  .scores-content.modal
+    button#closeScoresButton.scores-close(href='#') &times;
+    #tabbedContentContainer.dataDiv
+        #spGridContainer.statsGridContainer.active(data-tab-content='')
+            #spTitle.dataDiv.dark_shadow.profileTitleContainer
+                .profileHud
+                    .profileHudItem Highest score: 
+                    #spHighScore.profileHudItem.hudNumbers.light_shadow
+                    .profileHudItem Longest winning streak:
+                    #spStreak.profileHudItem.hudNumbers.light_shadow
+            #spPieChart.dataDiv.pieChart.dark_shadow
+            #spPieChart2.dataDiv.pieChart.dark_shadow
+            #spData.fullWidth.dark_shadow.hideOnMobile
+                table#SPGameRecords.dataDiv.dark_shadow
+                    tbody

@@ -9,9 +9,6 @@ import {
   SendTokenPlayToViewCB,
   AIDifficulty
 } from './player.js';
-import { io, Socket } from 'socket.io-client';
-import { auth } from 'express-openid-connect';
-import { stringify } from 'querystring';
 
 export type GameType = 'multiPlayer' | 'singlePlayer' | 'solitaire';
 export type Layout = 'razeway' | 'towers' | 'oldcity' | 'solitaire';
@@ -165,33 +162,26 @@ export class SinglePlayerGameModel extends GameModel {
     }
   }
 
-  public addRecordtoDB = async () => {
+  public addRecordtoDB = () => {
     // user1 ID will either be guest or authenticated user ID.
     // that determination is handled server side,
     // so user1ID is not added here.
+
+    const scores_json = localStorage.getItem('scoresHistory');
+    const scores = (scores_json && JSON.parse(scores_json)) || [];
+
     const gameResults = {
-      user1Score: this.currPlyr.getScore(),
-      user2ID: this.opposPlyr.aiDifficulty,
-      user2Score: this.opposPlyr.getScore(),
-      layout: this.layout
+      'Your Score': this.currPlyr.getScore(),
+      Opponent: this.opposPlyr.aiDifficulty,
+      'Opponent Score': this.opposPlyr.getScore(),
+      Layout: this.layout,
+      Date: new Date().toUTCString(),
+      Result:
+        this.currPlyr.getScore() > this.opposPlyr.getScore() ? 'Won' : 'Lost',
+      '#': scores.length + 1
     };
 
-    (async () => {
-      try {
-        const response = await fetch('/rest/storeSPGameResult', {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          },
-          method: 'post',
-          body: JSON.stringify(gameResults)
-        });
-
-        const message = await response;
-        console.log(message);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
+    scores.push(gameResults);
+    localStorage.setItem('scoresHistory', JSON.stringify(scores));
   };
 }

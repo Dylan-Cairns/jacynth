@@ -1,7 +1,7 @@
 import { Layout, SinglePlayerGameModel } from '../model/model.js';
 import { DeckType } from '../model/decktet.js';
-import { AIDifficulty, PlayerID } from '../model/player.js';
-import { SinglePlayerView, View } from '../view/view.js';
+import { AIDifficulty } from '../model/player.js';
+import { SinglePlayerView, tokenColor } from '../view/view.js';
 
 export class Controller {}
 
@@ -56,6 +56,11 @@ export class SinglePlayerController {
     // if there is existing game data in local storage, restore the
     // in progress game.
     if (localStorage.getItem('layout')) {
+      const tokenColor =
+        (localStorage.getItem('tokenColor') as tokenColor) ||
+        ('green' as tokenColor);
+      this.view.setPlayerTokenColor(tokenColor);
+
       this.model.restoreGame();
       this.view.restoreGame();
     }

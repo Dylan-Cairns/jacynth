@@ -2,19 +2,9 @@ include ../components/header.pug
 include ../components/mainMenu.pug
 include ../components/rules.pug
 include ../components/loadscreen.pug
-include ../components/chooseNick.pug
-script.
-    const hasNick = JSON.parse('!{JSON.stringify(hasNick)}');
 
 #profile-grid
   include ../components/menubar.pug
-  #nickNameContainer.dark_shadow
-    div
-    #nickname 
-    button#editNickBttn.menu-button.light_shadow Edit
-  #tabSet.dataDiv
-      .tab.active.dark_shadow(data-tab-target='#spGridContainer') Single Player Stats
-      .tab.dark_shadow(data-tab-target='#mpGridContainer') Multi Player Stats
   #tabbedContentContainer.dataDiv
       #spGridContainer.statsGridContainer.active(data-tab-content='')
         #spTitle.dataDiv.dark_shadow.profileTitleContainer
@@ -27,18 +17,6 @@ script.
         #spPieChart2.dataDiv.pieChart.dark_shadow
         #spData.fullWidth.dark_shadow.hideOnMobile
           table#SPGameRecords.dataDiv.dark_shadow
-            tbody
-      #mpGridContainer.statsGridContainer.active(data-tab-content='')
-        #mpTitle.dataDiv.dark_shadow.profileTitleContainer
-          .profileHud
-            .profileHudItem Highest score: 
-            #mpHighScore.profileHudItem.hudNumbers.light_shadow
-            .profileHudItem Longest winning streak:
-            #mpStreak.profileHudItem.hudNumbers.light_shadow
-        #mpPieChart.dataDiv.pieChart.dark_shadow
-        #mpPieChart2.dataDiv.pieChart.dark_shadow
-        #mpData.fullWidth.dark_shadow.hideOnMobile
-          table#MPGameRecords.dataDiv
             tbody
     
 

@@ -2,13 +2,12 @@ import { BoardSpace, GameBoard } from '../model/gameboard.js';
 import { Layout } from '../model/model.js';
 import { Card } from '../model/decktet.js';
 import { AIDifficulty, PlayerID } from '../model/player.js';
-import { Socket } from 'socket.io-client';
 
-// gametype variable passed in by express route
-declare const gameType: 'singleplayer' | 'multiplayer';
+export type tokenColor = 'green' | 'red';
 
 export class View {
   currPlyrID: PlayerID;
+  playerTokenColor: tokenColor;
   opposPlrID: PlayerID;
   app: Element;
   gameBoard: HTMLElement;
@@ -63,6 +62,7 @@ export class View {
 
   constructor(board: GameBoard, currPlyrID: PlayerID, opposPlyrID: PlayerID) {
     this.currPlyrID = currPlyrID;
+    this.playerTokenColor = 'green';
     this.opposPlrID = opposPlyrID;
     this.app = document.querySelector('#root')! as HTMLElement;
     this.gameBoard = document.querySelector('.gameboard')! as HTMLElement;
@@ -138,10 +138,10 @@ export class View {
     // - a new single player game (not restoring from backup)
     // - a multiplayer game
 
-    if (!localStorage.getItem('layout') || gameType === 'multiplayer') {
-      const token = this.createPlayerToken();
-      this.influenceTokenContainer.appendChild(token);
-    }
+    // if (!localStorage.getItem('layout')) {
+    //   const token = this.createPlayerToken();
+    //   this.influenceTokenContainer.appendChild(token);
+    // }
 
     // drag and drop methods
     const boardSpaces = document.querySelectorAll('.boardSpace');
@@ -221,8 +221,8 @@ export class View {
           // play can end turn after placing a card
           this.endTurnButton.disabled = false;
           // set turn status in localStorage
-          if (gameType === 'singleplayer')
-            localStorage.setItem('turnStatus', 'playedCard');
+
+          localStorage.setItem('turnStatus', 'playedCard');
           // or place a token
         } else if (this.draggedElement.classList.contains('influenceToken')) {
           this.draggedElement.parentNode.removeChild(this.draggedElement);
@@ -234,8 +234,8 @@ export class View {
 
           this.undoButton.disabled = false;
           // set turn status in localStorage
-          if (gameType === 'singleplayer')
-            localStorage.setItem('turnStatus', 'playedToken');
+
+          localStorage.setItem('turnStatus', 'playedToken');
         }
 
         // save move information for undo
@@ -244,22 +244,21 @@ export class View {
           targetSpace: targetSpace
         };
         this.movesArr.push(undoMoveObj);
-        if (gameType === 'singleplayer') {
-          // Save move information to localStorage. We can't save the HTMLElement directoy
-          // because card elements have children which won't be included in the JSON object.
-          // We could make a custom method to jsonify the children elements, but it's easier
-          // to just find the elements on the page by id later.
-          const undoMovesArr = localStorage.getItem('undoMoves')
-            ? JSON.parse(localStorage.getItem('undoMoves')!)
-            : [];
-          undoMovesArr.push({
-            draggedEle: undoMoveObj.draggedEle.id
-              ? undoMoveObj.draggedEle.id
-              : 'influenceToken',
-            targetSpace: undoMoveObj.targetSpace.id
-          });
-          localStorage.setItem('undoMoves', JSON.stringify(undoMovesArr));
-        }
+
+        // Save move information to localStorage. We can't save the HTMLElement directoy
+        // because card elements have children which won't be included in the JSON object.
+        // We could make a custom method to jsonify the children elements, but it's easier
+        // to just find the elements on the page by id later.
+        const undoMovesArr = localStorage.getItem('undoMoves')
+          ? JSON.parse(localStorage.getItem('undoMoves')!)
+          : [];
+        undoMovesArr.push({
+          draggedEle: undoMoveObj.draggedEle.id
+            ? undoMoveObj.draggedEle.id
+            : 'influenceToken',
+          targetSpace: undoMoveObj.targetSpace.id
+        });
+        localStorage.setItem('undoMoves', JSON.stringify(undoMovesArr));
       });
     });
 
@@ -290,7 +289,7 @@ export class View {
         if (this.movesArr.length > 0) {
           moveObj = this.movesArr.pop()!;
           const undoMovesJSON = localStorage.getItem('undoMoves');
-          if (undoMovesJSON && gameType === 'singleplayer') {
+          if (undoMovesJSON) {
             const undoMoves = JSON.parse(undoMovesJSON);
             undoMoves.pop();
             localStorage.setItem('undoMoves', JSON.stringify(undoMoves));
@@ -330,8 +329,8 @@ export class View {
           this.undoButton.disabled = true;
           this.endTurnButton.disabled = true;
           // update turn status in storage for resuming game
-          if (gameType === 'singleplayer')
-            localStorage.removeItem('turnStatus');
+
+          localStorage.removeItem('turnStatus');
           // if it's a token, leave undo button active.
         } else if (cardOrTokenToUndo?.classList.contains('influenceToken')) {
           targetSpace.removeChild(cardOrTokenToUndo);
@@ -341,8 +340,8 @@ export class View {
           }
           this.enableTokenDragging();
           // update turn status in storage for resuming game
-          if (gameType === 'singleplayer')
-            localStorage.setItem('turnStatus', 'playedCard');
+
+          localStorage.setItem('turnStatus', 'playedCard');
         }
       }
     });
@@ -494,7 +493,8 @@ export class View {
   };
 
   protected createPlayerToken() {
-    const tokenID = this.currPlyrID === 'Player 1' ? 'Player1' : 'Player2';
+    // hack existing token color system to allow customization. I should update the css with colors instead of player IDs
+    const tokenID = this.playerTokenColor === 'green' ? 'Player1' : 'Player2';
     const token = this.createElement(
       'div',
       'influenceToken',
@@ -505,7 +505,7 @@ export class View {
   }
 
   protected createEnemyToken() {
-    const tokenID = this.currPlyrID === 'Player 1' ? 'Player2' : 'Player1';
+    const tokenID = this.playerTokenColor === 'green' ? 'Player2' : 'Player1';
     return this.createElement(
       'div',
       'influenceToken',
@@ -568,7 +568,7 @@ export class View {
       // show game over message
       this.gameOverBox.style.visibility = 'visible';
       // if this was a single player game, reset local storage copy of in progress game
-      if (this.resetStorage && gameType === 'singleplayer') this.resetStorage();
+      if (this.resetStorage) this.resetStorage();
       if (this.currPlyrID === 'Player 1' && this.addRecordtoDB)
         this.addRecordtoDB();
       return true;
@@ -599,6 +599,10 @@ export class View {
         ele.classList.add('draggable');
       }
     });
+  }
+
+  public setPlayerTokenColor(tokenColor: tokenColor) {
+    this.playerTokenColor = tokenColor;
   }
 
   protected disableAllCardDragging() {
@@ -714,6 +718,7 @@ export class View {
 
   public restoreGame = () => {
     this.updateScore();
+
     const handJSON = localStorage.getItem(`${this.currPlyrID}-hand`);
 
     const turnState = localStorage.getItem('turnStatus');
@@ -883,6 +888,15 @@ export class SinglePlayerView extends View {
       radioElement.checked = true;
     }
 
+    const tokenColor = localStorage.getItem('tokenColor');
+
+    if (tokenColor) {
+      const radioElement = document.getElementById(
+        tokenColor
+      ) as HTMLInputElement;
+      radioElement.checked = true;
+    }
+
     // if no game data in local storage, show new game layout menu.
     // if there IS game data, the view will be filled with the existing data,
     // which will be triggered from the controller.
@@ -901,6 +915,8 @@ export class SinglePlayerView extends View {
 
       const layoutChoice = formData.get('layout') as Layout;
       const aiDifficulty = formData.get('difficulty') as AIDifficulty;
+      const tokenColor = formData.get('tokenColor') as tokenColor;
+      this.playerTokenColor = tokenColor ? tokenColor : this.playerTokenColor;
 
       if (!layoutChoice || !aiDifficulty || !this.startGame) return;
       // set difficulty setting in localstorage, for restoring
@@ -908,6 +924,11 @@ export class SinglePlayerView extends View {
       // in the new game menu
       localStorage.setItem('difficulty', aiDifficulty);
       localStorage.setItem('layoutChoice', layoutChoice);
+      localStorage.setItem('tokenColor', this.playerTokenColor);
+
+      const token = this.createPlayerToken();
+      this.influenceTokenContainer.appendChild(token);
+
       this.startGame(layoutChoice, aiDifficulty);
     });
   }

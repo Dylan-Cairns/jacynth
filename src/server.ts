@@ -3,6 +3,8 @@ import path from 'path';
 import http from 'http';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { Server } from 'socket.io';
+
 import { viewRouter } from './routes/views.js';
 
 // configuration
