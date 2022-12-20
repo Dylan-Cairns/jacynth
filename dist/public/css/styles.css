@@ -38,8 +38,8 @@
 
 body {
   margin: 0;
-  background-image: url('../assets/building_grey2.png'),
-    url('../assets/funky-lines-blue.png');
+  background-image: url('dist/public/assets/building_grey2.png'),
+    url('dist/public/assets/funky-lines-blue.png');
   /* background-color: var(--body-background); */
   background-size: 100vw, auto;
   background-blend-mode: multiply;
@@ -213,19 +213,19 @@ input[type='submit']:hover {
 }
 
 .player1Icon.losing {
-  background-image: url('../assets/penitent_losing.svg');
+  background-image: url('dist/public/assets/penitent_losing.svg');
 }
 
 .player1Icon.winning {
-  background-image: url('../assets/penitent_winning.svg');
+  background-image: url('dist/public/assets/penitent_winning.svg');
 }
 
 .player2Icon.losing {
-  background-image: url('../assets/sailor_losing.svg');
+  background-image: url('dist/public/assets/sailor_losing.svg');
 }
 
 .player2Icon.winning {
-  background-image: url('../assets/sailor_winning.svg');
+  background-image: url('dist/public/assets/sailor_winning.svg');
 }
 
 .menuBar {
