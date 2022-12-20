@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'Fortune Letters';
-  src: url('dist/public/assets/fortune-letters.ttf') format('truetype');
+  src: url('../assets/fortune-letters.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Fortune Widgets';
-  src: url('dist/public/assets/fortune_widgets.ttf') format('truetype');
+  src: url('../assets/fortune_widgets.ttf') format('truetype');
 }
 
 :root {
@@ -38,8 +38,8 @@
 
 body {
   margin: 0;
-  background-image: url('dist/public/assets/building_grey2.png'),
-    url('dist/public/assets/funky-lines-blue.png');
+  background-image: url('../assets/building_grey2.png'),
+    url('../assets/funky-lines-blue.png');
   /* background-color: var(--body-background); */
   background-size: 100vw, auto;
   background-blend-mode: multiply;
@@ -213,19 +213,19 @@ input[type='submit']:hover {
 }
 
 .player1Icon.losing {
-  background-image: url('dist/public/assets/penitent_losing.svg');
+  background-image: url('../assets/penitent_losing.svg');
 }
 
 .player1Icon.winning {
-  background-image: url('dist/public/assets/penitent_winning.svg');
+  background-image: url('../assets/penitent_winning.svg');
 }
 
 .player2Icon.losing {
-  background-image: url('dist/public/assets/sailor_losing.svg');
+  background-image: url('../assets/sailor_losing.svg');
 }
 
 .player2Icon.winning {
-  background-image: url('dist/public/assets/sailor_winning.svg');
+  background-image: url('../assets/sailor_winning.svg');
 }
 
 .menuBar {
@@ -655,11 +655,11 @@ table td::before {
 }
 
 .influenceToken.Player1Token {
-  background-image: url('dist/public/assets/meeple_player.svg');
+  background-image: url('../assets/meeple_player.svg');
 }
 
 .influenceToken.Player2Token {
-  background-image: url('dist/public/assets/meeple_enemy.svg');
+  background-image: url('../assets/meeple_enemy.svg');
 }
 
 .influenceToken.enemyToken {
@@ -824,22 +824,22 @@ table td::before {
 }
 
 .Knots {
-  background-image: url('dist/public/assets/knots.svg');
+  background-image: url('../assets/knots.svg');
 }
 .Leaves {
-  background-image: url('dist/public/assets/leaves.svg');
+  background-image: url('../assets/leaves.svg');
 }
 .Moons {
-  background-image: url('dist/public/assets/moons.svg');
+  background-image: url('../assets/moons.svg');
 }
 .Suns {
-  background-image: url('dist/public/assets/suns.svg');
+  background-image: url('../assets/suns.svg');
 }
 .Waves {
-  background-image: url('dist/public/assets/waves.svg');
+  background-image: url('../assets/waves.svg');
 }
 .Wyrms {
-  background-image: url('dist/public/assets/wyrms.svg');
+  background-image: url('../assets/wyrms.svg');
 }
 
 a {
@@ -871,7 +871,7 @@ a:hover {
   left: 0;
   right: 0;
   background-color: var(--body-background);
-  background-image: url('dist/public/assets/funky-lines.png');
+  background-image: url('../assets/funky-lines.png');
   background-blend-mode: multiply;
   color: rgb(255, 255, 255);
   font-size: calc(var(--text-large) * 1.25);
@@ -896,7 +896,7 @@ a:hover {
   left: 0;
   right: 0;
   background-color: var(--body-background);
-  background-image: url('dist/public/assets/funky-lines.png');
+  background-image: url('../assets/funky-lines.png');
   background-blend-mode: multiply;
   color: rgb(255, 0, 0);
   font-size: calc(var(--text-large) * 1.25);
