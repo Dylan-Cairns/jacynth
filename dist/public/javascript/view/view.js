@@ -44,20 +44,20 @@ export class View {
                 return Promise.all(promises);
             };
             const srcArr = [
-                '../assets/suns.svg',
-                '../assets/moons.svg',
-                '../assets/wyrms.svg',
-                '../assets/knots.svg',
-                '../assets/leaves.svg',
-                '../assets/waves.svg',
-                '../assets/meeple_player.svg',
-                '../assets/meeple_enemy.svg',
-                '../assets/sailor_losing.svg',
-                '../assets/penitent_losing.svg',
-                '../assets/sailor_winning.svg',
-                '../assets/penitent_winning.svg',
-                '../assets/dinner.png',
-                '../assets/suits_ranks_basic.png'
+                'dist/public/assets/suns.svg',
+                'dist/public/assets/moons.svg',
+                'dist/public/assets/wyrms.svg',
+                'dist/public/assets/knots.svg',
+                'dist/public/assets/leaves.svg',
+                'dist/public/assets/waves.svg',
+                'dist/public/assets/meeple_player.svg',
+                'dist/public/assets/meeple_enemy.svg',
+                'dist/public/assets/sailor_losing.svg',
+                'dist/public/assets/penitent_losing.svg',
+                'dist/public/assets/sailor_winning.svg',
+                'dist/public/assets/penitent_winning.svg',
+                'dist/public/assets/dinner.png',
+                'dist/public/assets/suits_ranks_basic.png'
             ];
             preloadImages(srcArr).then((imgs) => {
                 // remove loading screen
