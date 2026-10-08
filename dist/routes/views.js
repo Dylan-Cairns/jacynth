@@ -1,5 +1,5 @@
 import express from 'express';
-export const viewRouter = express();
+export const viewRouter = express.Router();
 viewRouter.get('/singleplayer', (req, res) => {
     res.render('game', {
         gameType: 'singleplayer',

@@ -1,7 +1,7 @@
 import express from 'express';
 import * as Utils from '../db_model/utils.js';
 
-export const viewRouter = express();
+export const viewRouter = express.Router();
 
 viewRouter.get('/singleplayer', (req, res) => {
   res.render('game', {

@@ -2,6 +2,7 @@ declare class Plotly {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor(data: any);
   static newPlot(arg0: string, data: any, layout: any, config: any): any;
+  static purge(arg0: string): void;
 }
 
 // class to handle the main menu on all pages
@@ -196,21 +197,42 @@ function convertDate(dateObj: Date) {
 
 export class ScoresHandler {
   constructor() {
+    this.refresh();
+    // MainMenuHandler opens the panel; read the latest results each time.
+    document.getElementById('scoresButton')?.addEventListener('click', () => {
+      this.refresh();
+    });
+  }
+
+  public refresh() {
     const savedScores = localStorage.getItem('scoresHistory');
 
     const SPgameData = savedScores ? JSON.parse(savedScores) : [];
 
+    const table = document.getElementById('SPGameRecords') as HTMLTableElement;
+    table.getElementsByTagName('tbody')[0].innerHTML = '';
+
+    const spHighScoreDiv = document.getElementById('spHighScore');
+    if (spHighScoreDiv)
+      spHighScoreDiv.textContent = String(getHighScore(SPgameData));
+
+    const spStreakDiv = document.getElementById('spStreak');
+    if (spStreakDiv)
+      spStreakDiv.textContent = String(getWinningStreak(SPgameData));
+
+    if (SPgameData.length === 0) {
+      // Clear previous charts if the stored history was removed.
+      ['spPieChart', 'spPieChart2'].forEach((id) => {
+        if (document.getElementById(id)?.classList.contains('js-plotly-plot')) {
+          Plotly.purge(id);
+        }
+      });
+      return;
+    }
+
     if (SPgameData.length > 0) {
       // create sp game data table
       populateTable(SPgameData, 'SPGameRecords');
-
-      const spHighScore = getHighScore(SPgameData);
-      const spHighScoreDiv = document.getElementById('spHighScore');
-      if (spHighScoreDiv) spHighScoreDiv.innerHTML += spHighScore;
-
-      const spWinningStreak = getWinningStreak(SPgameData);
-      const spStreakDiv = document.getElementById('spStreak');
-      if (spStreakDiv) spStreakDiv.innerHTML += spWinningStreak;
 
       const winsLosses = getWinsLosses(SPgameData);
       const pieChartLabels = Object.keys(winsLosses);
